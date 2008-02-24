@@ -10,6 +10,8 @@ Source0:	http://www.likewisesoftware.com/bits/%{name}-%{version}.tar.gz
 URL:		http://www.likewisesoftware.com/
 BuildRequires:	autoconf
 BuildRequires:	cups-devel
+BuildRequires:	samba-devel
+BuildRequires:	krb5-devel
 BuildRequires:	rpmbuild(macros) >= 1.228
 Requires(post,preun):	/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -45,7 +47,6 @@ cd winbindd/source
 	--with-syslog \
 	--with-acl-support \
 	--enable-require-wrfile-keytab
-# and more
 cd -
 cd domainjoin
 %{__autoconf}
@@ -55,12 +56,9 @@ cd domainjoin
 	--with-lockdir=/var/lib/%{name} \
 	--with-logfilebase=/var/log/%{name} \
 	--with-piddir=/var/run
-
 cd -
 
-%{__make} \
-	CFLAGS="%{rpmcflags}" \
-	LDFLAGS="%{rpmldflags}"
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
