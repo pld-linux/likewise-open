@@ -2,14 +2,16 @@
 Summary:	Likewise - Linux authentication on a Microsoft network using AD
 Name:		likewise-open
 Version:	4.0.0
-Release:	0.1
+Release:	0.2
 License:	GPL v3
 Group:		Applications
 Source0:	http://www.likewisesoftware.com/bits/%{name}-%{version}.tar.gz
 # Source0-md5:	089a479054ddb308702110fa365c31c8
+Patch0:		%{name}-chmod.patch
 URL:		http://www.likewisesoftware.com/
 BuildRequires:	autoconf
 BuildRequires:	cups-devel
+BuildRequires:	mono-compat-links
 BuildRequires:	samba-devel
 BuildRequires:	krb5-devel
 BuildRequires:	rpmbuild(macros) >= 1.228
@@ -24,11 +26,10 @@ kerberized services that the Linux machine hosts.
 
 %prep
 %setup -q -n %{name}-%{version}-release
+%patch0 -p1
 
 %build
 cd winbindd/source
-%{__autoconf} -I m4 -I lib/replace
-%{__autoheader}
 %configure \
 	--with-configdir=%{_sysconfdir}/samba \
 	--with-lockdir=%{_var}/lib/%{name} \
@@ -51,11 +52,8 @@ cd -
 cd domainjoin
 %{__autoconf}
 %{__autoheader}
-%configure \
-	--with-configdir=%{_sysconfdir}/samba \
-	--with-lockdir=/var/lib/%{name} \
-	--with-logfilebase=/var/log/%{name} \
-	--with-piddir=/var/run
+%configure 
+
 cd -
 
 %{__make}
@@ -63,20 +61,35 @@ cd -
 %install
 rm -rf $RPM_BUILD_ROOT
 
+install -d $RPM_BUILD_ROOT/bin
+install -d $RPM_BUILD_ROOT/%{_lib}/security
+
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+%{__mv} $RPM_BUILD_ROOT/usr/lib/samba/security/pam_lwidentity.so $RPM_BUILD_ROOT/%{_lib}/security
+
+%ifarch %{x8664}
+install -d $RPM_BUILD_ROOT%{_libdir}/samba
+%{__mv} $RPM_BUILD_ROOT/usr/lib/samba/libwbclient.so $RPM_BUILD_ROOT%{_libdir}/samba/libwbclient.so
+%{__mv} $RPM_BUILD_ROOT/usr/lib/samba/idmap $RPM_BUILD_ROOT%{_libdir}/samba/
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
-
-%post
-
-%preun
-
-%postun
+%post	-p /sbin/ldconfig
+%postun	-p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS CREDITS ChangeLog NEWS README THANKS TODO
+%attr(755,root,root) %{_bindir}/domainjoin-cli
+%attr(755,root,root) %{_bindir}/lwiinfo
+%attr(755,root,root) %{_bindir}/lwimsg
+%attr(755,root,root) %{_bindir}/lwinet
+%attr(755,root,root) %{_libdir}/samba/libwbclient.so  
+%attr(755,root,root) %{_sbindir}/likewise-winbindd
+%{_includedir}/samba/wbclient.h
+%attr(755,root,root) /%{_lib}/security/pam_lwidentity.so
+%dir %{_libdir}/samba/idmap
+%attr(755,root,root) %{_libdir}/samba/idmap/lwopen.so
