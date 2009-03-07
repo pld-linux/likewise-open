@@ -11,7 +11,11 @@ Patch0:		%{name}-chmod.patch
 URL:		http://www.likewisesoftware.com/
 BuildRequires:	autoconf
 BuildRequires:	cups-devel
+BuildRequires:	libgdiplus-devel
 BuildRequires:	mono-compat-links
+BuildRequires:	mono-csharp
+BuildRequires:	openldap-devel
+BuildRequires:	pam-devel
 BuildRequires:	samba-devel
 BuildRequires:	krb5-devel
 BuildRequires:	rpmbuild(macros) >= 1.228
