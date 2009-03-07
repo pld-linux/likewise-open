@@ -1,0 +1,24 @@
+diff -burNp likewise-open-4.0.0-release/domainjoin/libcentutils/ctfileutils.c likewise-open-4.0.0-release-dud/domainjoin/libcentutils/ctfileutils.c
+--- likewise-open-4.0.0-release/domainjoin/libcentutils/ctfileutils.c	2007-11-26 15:02:31.000000000 +0100
++++ likewise-open-4.0.0-release-dud/domainjoin/libcentutils/ctfileutils.c	2009-03-07 16:31:32.084678048 +0100
+@@ -1298,7 +1298,7 @@ CTRunSedOnFile(PCSTR pszSrcPath,
+ 		BAIL_ON_CENTERIS_ERROR(ceError);
+ 	}
+ 
+-	dwFdOut = open(tempPath, O_WRONLY | O_EXCL | O_CREAT);
++	dwFdOut = open(tempPath, O_WRONLY | O_EXCL | O_CREAT, 0666);
+ 	if (dwFdOut < 0) {
+ 		ceError = CTMapSystemError(errno);
+ 		BAIL_ON_CENTERIS_ERROR(ceError);
+diff -burNp likewise-open-4.0.0-release/domainjoin/libdomainjoin/src/djprocutils.c likewise-open-4.0.0-release-dud/domainjoin/libdomainjoin/src/djprocutils.c
+--- likewise-open-4.0.0-release/domainjoin/libdomainjoin/src/djprocutils.c	2007-11-26 15:02:31.000000000 +0100
++++ likewise-open-4.0.0-release-dud/domainjoin/libdomainjoin/src/djprocutils.c	2009-03-07 16:40:47.222330821 +0100
+@@ -252,7 +252,7 @@ DJSpawnProcessOutputToFile(PCSTR pszComm
+ 		BAIL_ON_CENTERIS_ERROR(ceError);
+ 	}
+ 
+-	dwFdOut = open(file, O_CREAT|O_WRONLY);
++	dwFdOut = open(file, O_CREAT|O_WRONLY, 0666);
+ 
+ 	if (dwFdOut < 0) {
+ 		ceError = CTMapSystemError(errno);
