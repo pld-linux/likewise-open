@@ -17,7 +17,7 @@ BuildRequires:	mono-csharp
 BuildRequires:	openldap-devel
 BuildRequires:	pam-devel
 BuildRequires:	samba-devel
-BuildRequires:	krb5-devel
+BuildRequires:	heimdal-devel
 BuildRequires:	rpmbuild(macros) >= 1.228
 Requires(post,preun):	/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
